@@ -1,0 +1,12 @@
+**/bin/
+**/obj/
+**/appsettings.json
+TestResults/
+.env
+
+# Local secrets, environment and IDE artifacts
+.env.*
+*.runsettings
+**/appsettings.local.json
+.vs/
+.idea/
