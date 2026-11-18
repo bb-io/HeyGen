@@ -1,0 +1,32 @@
+{
+  "ConnectionDefinition": {
+    "x-api-key": ""
+  },
+  "Fixtures": {
+    "CompletedVideoId": "",
+    "EditableVideoId": "",
+    "AvatarLookId": "",
+    "AvatarGroupId": "",
+    "TemplateId": "",
+    "CompletedTranslationId": "",
+    "VideoSourceUrl": "",
+    "AudioSourceUrl": "",
+    "CompletedLipsyncId": "",
+    "CompletedClippingJobId": "",
+    "CompletedClipId": "",
+    "AgentSessionId": "",
+    "ExistingVideoBatchId": "",
+    "UploadedAssetBatchId": "",
+    "GlossaryId": "",
+    "AssetFilePath": "",
+    "TtsVoiceId": "",
+    "InstantVoiceId": "",
+    "NarrationFilePath": "",
+    "CompletedProofreadId": "",
+    "EditableProofreadId": "",
+    "ApprovedProofreadSrtPath": "",
+    "RenderableProofreadId": "",
+    "StudioImageUrl": "",
+    "AgentReviewDraftId": ""
+  }
+}

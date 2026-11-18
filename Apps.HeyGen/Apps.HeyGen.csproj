@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <Product>HeyGen</Product>
+        <Description>Automate HeyGen avatar videos and localization.</Description>
+        <Version>1.4.0</Version>
+        <PackageId>HeyGen</PackageId>
+        <AssemblyName>Apps.HeyGen</AssemblyName>
+        <EnableDynamicLoading>true</EnableDynamicLoading>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Blackbird.Applications.Sdk.Common" Version="2.17.0" />
+        <PackageReference Include="Blackbird.Applications.Sdk.Utils" Version="1.0.26" />
+        <PackageReference Include="Blackbird.Applications.SDK.Extensions.FileManagement" Version="1.1.0" />
+        <PackageReference Include="Polly" Version="7.2.4" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <EmbeddedResource Include="../README.md" Link="README.md" />
+        <EmbeddedResource Include="image/icon.png" />
+    </ItemGroup>
+
+</Project>
