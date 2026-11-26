@@ -1,102 +1,133 @@
-# HeyGen for Blackbird
+# Blackbird.io HeyGen
 
-Generate synthetic avatar videos from scripts or Studio templates. Use native HeyGen dubbing when you want the existing footage translated with voice cloning, or route editable scripts and template text through a TMS and a human review checkpoint before rendering a new video.
+Blackbird is the new automation backbone for the language technology industry. Blackbird provides enterprise-scale automation and orchestration with a simple no-code/low-code platform. Blackbird enables ambitious organizations to identify, vet and automate as many processes as possible. Not just localization workflows, but any business and IT process. This repository represents an application that is deployable on Blackbird and usable inside the workflow editor.
+
+## Introduction
 
 <!-- begin docs -->
 
-## Connection
+HeyGen is an AI video platform for avatar videos, voice-cloned dubbing and lip-sync. Use this app to generate avatar videos from scripts or Studio templates, translate existing footage with native HeyGen dubbing, or route editable scripts, template text and translated subtitles through a TMS or a human review checkpoint before rendering a new video.
 
-Create a HeyGen API key in the [API dashboard](https://platform.heygen.com/api-keys), then add a **HeyGen** connection in Blackbird. Use the key from the workspace that owns or can access your videos and other assets. The app sends the key as `x-api-key` to `https://api.heygen.com/v3`. It validates the connection using the current-key endpoint, which accepts any valid HeyGen API key without an extra account scope. Enable only the [permissions](https://developers.heygen.com/docs/api-key-permissions) needed by each Bird.
+## Before setting up
 
-## Actions and triggers
+Before you can connect you need to make sure that:
 
-- **Videos** — Search, get and download videos and captions, or create a single avatar video or multi-scene Studio video.
-- **Templates and XLIFF** — Inspect template variables and render an API-ready template. Export video speech or template text as XLIFF for translation and human review. Read translated speech for Create video, or create a new template render directly from the approved file.
-- **Audio** — Convert text or a recording into a Blackbird narration file, then render an avatar video or lip-sync footage with that file.
-- **Native translation** — Translate video, Get video translation, Download translated video and Get translation captions. The proofreading actions let a linguist edit the translated SRT before the dubbed render.
-- **Brand glossaries** — Search, get, create, update, delete and apply workspace rules.
-- **Video Agent** — Generate drafts, list earlier cuts and revise selected scenes after review.
-- **Lipsync and AI Clipping** — Submit jobs, read progress and retrieve results.
-- **Batches** — Submit native video, translation, lipsync or asset batches. Read aggregate and item status.
-- **Events** — On video completed, On video failed, On translation completed and On proofread ready are polling triggers. Workspace-wide polls establish a baseline. A proofread checkpoint scoped to one session also handles subtitles that are ready on the first check.
+- You have a HeyGen account with API access and a funded API balance. Most generation actions (videos, translations, lipsync, clipping, speech) consume API credits. See the [HeyGen API pricing](https://help.heygen.com/en/articles/10060327-heygen-api-pricing-credits-explained) and your [account pricing page](https://platform.heygen.com/pricing).
+- You have created an API key in the [HeyGen API dashboard](https://platform.heygen.com/api-keys), in the workspace that owns or can access your videos and assets. Enable only the [permissions](https://developers.heygen.com/docs/api-key-permissions) your workflows need.
 
-See [technical documentation](docs/technical-documentation.md) for scopes, action inputs and outputs, picker behavior, XLIFF constraints, and example Birds.
+## Connecting
 
-## API rate limits and concurrency
+1. Navigate to **Apps** and search for **HeyGen**.
+2. Click **Add Connection**.
+3. Name your connection for future reference, e.g. 'My HeyGen connection'.
+4. Fill in the **API key** you created in the HeyGen API dashboard.
+5. Click **Connect**.
+6. Confirm that the connection has appeared and the status is **Connected**.
 
-| Limit | Self-serve API | Enterprise API |
-|---|---:|---:|
-| General reads | 300/min | 1,000/min |
-| General writes | 10/s | 30/s |
-| Heavy operations such as asset upload | 30/min | 120/min |
-| Job status | 500/min and 600/min per IP | 1,500/min and 1,800/min per IP |
-| Native batch creation endpoints | 30/min | 30/min |
-| Included concurrent workflows | 10 | 20 |
-| Optional burst | — | Up to 50 extra per eligible workflow type at 1.5× contract rate |
+## Actions
 
-Rate limits apply per user and endpoint unless indicated. HeyGen counts status paths with different resource IDs separately and also applies the IP cap. Enterprise burst is opt-in and applies to avatar renders and video translations. Individual jobs and batch items remain subject to the workspace entitlement. Check [HeyGen usage limits](https://developers.heygen.com/docs/usage-limits).
+### Videos
 
-## API prices and credits
+- **Search videos** finds accessible HeyGen videos by title and status.
+- **Get video** returns the current status, metadata and download URLs for a video.
+- **Download video** downloads the rendered video as a file.
+- **Get captions** downloads the SRT captions of a rendered video.
+- **Create video** submits a single-scene avatar video from a script and returns its video ID.
 
-Provider-published self-serve examples, checked November 18, 2026. These are API rates, billed to the API balance. The credit figures are the values published by HeyGen alongside its USD rates. The account's API pricing page and contract govern actual charges.
+### Studio video
 
-| Operation | Self-serve USD per minute | Self-serve API credits per minute |
-|---|---:|---:|
-| Avatar III, Digital Twin | $0.60 | 12 |
-| Avatar III, Studio or Photo Avatar | $0.99 | 20 |
-| Avatar IV, Photo Avatar | $2.31 | 46 |
-| Avatar IV, Digital Twin or Studio Avatar | $4.83 | 97 |
-| Avatar V, Digital Twin | $7.20 | 144 |
-| Video Agent | $5.82 | 116 |
-| Translation, Speed audio-only | $0.57 | 11 |
-| Translation, Speed lip sync | $0.81 | 16 |
-| Translation, Precision lip sync | $1.50 | 30 |
-| Lipsync, Speed | $0.84 | 17 |
-| Lipsync, Precision | $1.74 | 35 |
-| AI Clipping, per minute of source footage | $0.70 | 14 |
+- **Create Studio video** composes 1–50 ordered avatar, image and video scenes into one render. Media and narration can be HeyGen asset IDs, directly downloadable URLs or Blackbird files. Use the returned video ID with the video status and download actions.
 
-The same Help Center table lists Cinematic Avatar at **$7.30 / 146 credits per 720p render** or **$17.67 / 354 credits per 1080p render**. Cinematic Avatar is available through eligible native video batch payloads. HeyGen meters video and Agent output by actual seconds as described in its API pricing guidance. Verify the engine, avatar and media settings used by your template or batch before estimating costs. Public Enterprise schedules are unavailable. Use your contracted operation rates, with any opted-in burst multiplier, for Enterprise estimates. The documentation does not establish a separate public template or batch discount. Check the [API pricing guidance](https://help.heygen.com/en/articles/10060327-heygen-api-pricing-credits-explained) and the [account pricing page](https://platform.heygen.com/pricing).
+### Templates
 
-A three-minute Precision translation into five languages submits five jobs and would produce about **900 seconds** of aggregate output, assuming each translation stays three minutes. At the published rate, that is **$22.50 and 450 credits**. Plan for output-length variation. Cap target languages and parallel flights, and use small batches when validating a new Bird. A batch acknowledges receipt before every item has succeeded.
+- **Get template variables** returns the editable variable names, types and defaults of an API-ready template.
+- **Create video from template** fills an API-ready Studio template and submits a new render.
+- **Export template text as XLIFF** exports the current default values of a template's text variables for translation.
+- **Create template video from XLIFF** applies the translated XLIFF text to the same template and submits a new render.
 
-## Review and revise Video Agent drafts
+### Script localization
 
-Use **List Video Agent drafts** and **List video scenes** to choose the cut and capture the exact edit version. **Revise selected scenes** accepts one instruction per selected scene and returns the new draft ID when available. Reuse ordinary video status and download actions for that ID. The [review guide](docs/review-to-localized-video-demo.md) shows how to approve the revised cut before sending it into translation proofreading. See [HeyGen scene edits](https://developers.heygen.com/docs/edit-scenes).
+- **Export video script as XLIFF** exports the editable synthesized speech of a HeyGen video's scenes for translation.
+- **Read translated video script** reads translated speech from an exported XLIFF, ready to use in **Create video**.
 
-## Studio video composition
+### Audio
 
-**Create Studio video** assembles 1–50 ordered scenes using a speaking avatar, still image or video clip. Use asset IDs, directly downloadable media URLs, or supported Blackbird files for media and narration. It returns a single video ID for the standard status and download actions. Choose **Automatic per Flight** for a runtime key, or supply a custom key for cross-Flight deduplication. In Automatic mode, assign different render slots to renders inside the same Flight. See [HeyGen Studio](https://developers.heygen.com/studio-videos) and the [CMS-to-localized-video blueprint](docs/CMS-to-localized-video-blueprint.md) for a release-note-to-localized-video example.
+- **Text to speech** turns written text into a WAV or MP3 narration file using a HeyGen voice.
+- **Speech to speech** revoices a recording with an instant voice from your workspace while preserving its words and timing.
+- **Create avatar video from audio** submits an avatar render using a narration file, an HTTPS URL or a HeyGen audio asset ID.
 
-## Native translation proofreading
+### Video translation
 
-Start a proofread session for each target language. Wait with **On proofread ready** scoped to the session. Then download its translated SRT to Blackbird. Route it to a linguist through a Checkpoint or your TMS. After approval, upload the edited SRT to the same session and then generate the dubbed video. Map the returned **Translation ID** to **Get video translation**, **Download translated video** or **Get translation captions**. See the [HeyGen proofreading workflow](https://developers.heygen.com/docs/video-translate#proofread-before-finalizing).
+- **Translate video** starts native HeyGen voice-cloned dubbing and returns a translation ID for each requested language.
+- **Get video translation** returns a translation job's status, output language and artifact URLs.
+- **Download translated video** downloads the translated video as a file.
+- **Get translation captions** downloads the translated SRT or WebVTT captions.
 
-Both Speed and Precision support proofreading on paid HeyGen API accounts. Session creation and final rendering use separate submission keys. Use the account pricing page for billing estimates, including any draft and render costs. See [HeyGen API pricing](https://help.heygen.com/en/articles/10060327-heygen-api-pricing-credits-explained).
+### Translation proofreading
 
-## Audio production
+- **Start translation proofread** prepares an editable translated SRT and returns a proofread session ID for each language.
+- **Get proofread session** returns the session status, language and failure details.
+- **Download proofread SRT** downloads the current translated SRT from a completed proofread session.
+- **Upload edited proofread SRT** replaces the session's translated subtitles with the reviewed SRT.
+- **Generate video from proofread** renders the dubbed video using the current proofread subtitles and returns a translation ID.
 
-**Text to speech** generates WAV or MP3 with the paid HeyGen Voice 1 model. **Speech to speech** uses an active instant voice in your workspace, preserves the recording's words and timing, and generates WAV. Both return a Blackbird file for a Checkpoint, **Create avatar video from audio**, or **Create lipsync**. The avatar action also accepts a direct HTTPS URL or a HeyGen audio asset ID. See the [TTS guide](https://developers.heygen.com/docs/voices/heygen-voice-speech) and [STS guide](https://developers.heygen.com/docs/voices/speech-to-speech).
+A typical proofreading workflow: start a proofread session for each target language, wait with **On proofread ready** scoped to the session, download the SRT, send it to a linguist through a checkpoint or your TMS, upload the edited SRT and generate the dubbed video. See the [HeyGen proofreading workflow](https://developers.heygen.com/docs/video-translate#proofread-before-finalizing).
 
-HeyGen publishes a self-serve rate of **$15 / 300 credits per million characters** for instant voice speech on the standard model and **$0.12 / 2.4 credits per minute** for speech-to-speech. Check account terms for professional voices and contract rates. The documented speech limit is **30 requests per minute per endpoint**. The later avatar render is billed at its video generation rate. See the [API pricing guidance](https://help.heygen.com/en/articles/10060327-heygen-api-pricing-credits-explained) and [usage limits](https://developers.heygen.com/docs/usage-limits).
+### Video Agent
 
-## Retrying jobs
+- **Create Video Agent session** generates a video from a prompt and optional reference files.
+- **Get Video Agent session** returns the session status and the video ID once assigned.
+- **List Video Agent drafts** lists the videos produced by a Video Agent session, newest first.
+- **List video scenes** returns the scene IDs, narration and edit version of a draft.
+- **Revise selected scenes** submits one instruction per selected scene and returns the new draft's video ID when available.
 
-For endpoints with HeyGen idempotency, provide a **Submission key** unique to the logical job. Map a durable value such as `asset-123:es:revision-7`. Reuse it only for the same job and inputs within HeyGen's 24-hour window. Use a new key for an intentionally new render. A correlation ID is separate.
+### Lipsync
 
-The app retries HTTP 429 on reads only. It honors a short `Retry-After`, backs off when the header is absent, and surfaces longer waits. On an ambiguous write response, inspect HeyGen history and reuse the original submission key where applicable. Video Agent session creation and text-to-speech expose no documented idempotency key. Check session history or speech usage before manually trying again. Speech-to-speech requires the same key and identical inputs for a safe replay within 24 hours.
+- **Create lipsync** replaces the audio of a video and submits it for lip re-animation.
+- **Get lipsync** returns a lipsync job's status and artifact URLs.
+- **Download lipsync video** downloads the completed lipsync render as a file.
+
+### AI Clipping
+
+- **Create AI clipping job** generates short highlight clips from a source video.
+- **Get AI clipping job** returns the job progress and the produced clips.
+- **Download clip** downloads a completed highlight clip.
+
+### Batches
+
+- **Create batch** submits 1–100 video, translation or lipsync requests as a native HeyGen batch.
+- **Get batch** returns the aggregate status and individual outcomes of a batch.
+
+### Asset batches
+
+- **Create asset batch** uploads files into a native HeyGen asset batch and starts ingestion.
+- **Complete asset batch** repeats ingestion for an asset batch after all files have been uploaded.
+
+### Brand glossaries
+
+- **Search brand glossaries** finds the brand glossaries visible to the connection.
+- **Get brand glossary** returns the pronunciation, do-not-translate and forced-translation rules of a glossary.
+- **Create brand glossary** creates a glossary with optional pronunciation and translation rules.
+- **Update brand glossary** changes the name or replaces the supplied rule lists. Omitted rule lists remain intact.
+- **Delete brand glossary** permanently deletes a glossary.
+
+## Events
+
+- **On video completed** triggers when HeyGen videos are completed.
+- **On video failed** triggers when HeyGen videos fail.
+- **On translation completed** triggers when native video translations are completed.
+- **On proofread ready** triggers when translated subtitles of a proofread session are ready for editing. Scope it to one session to use it as a checkpoint.
+
+All events are polling events. The first poll records existing items without starting workflows. Results found in one poll are sent together.
+
+## Limitations
+
+- For endpoints that support idempotency, provide a **Submission key** unique to the logical job (for example `asset-123:es:revision-7`). Reuse it only for the same job and inputs within HeyGen's 24-hour window.
+- Rate-limited (HTTP 429) reads are retried automatically; writes are not. If a write fails with an unclear result, check the job history in HeyGen before running it again.
+- HeyGen applies rate and concurrency limits per plan. See [HeyGen usage limits](https://developers.heygen.com/docs/usage-limits).
+
+## Feedback
+
+Do you want to use this app or do you have feedback on our implementation? Reach out to us using the [established channels](https://www.blackbird.io/) or create an issue.
 
 <!-- end docs -->
-
-## Build and install
-
-Run from the source root with .NET 8.
-
-```sh
-dotnet build Apps.HeyGen.sln -c Release
-dotnet test Apps.HeyGen.sln -c Release
-dotnet publish Apps.HeyGen/Apps.HeyGen.csproj -c Release -o publish
-```
-
-Zip the contents of `publish` at the archive root. In Blackbird open **Apps → My custom apps → Create app** and upload the deployment ZIP in step two. To update an existing installation of this package, open that app, choose **New version → Update App**, and upload a higher version. Keep Product and PackageId as `HeyGen` and AssemblyName as `Apps.HeyGen`. Keep saved action identities and existing field contracts stable for updates. See [Blackbird deployment](https://docs.blackbird.io/sdk/deploying/).
-
-To run the online integration tests, copy `Tests.HeyGen/appsettings.json.example` to `appsettings.json` beside it, set the disposable resource IDs and URLs, and set the key in `HEYGEN_API_KEY` or the ignored file. Set `HEYGEN_TEST_ALLOW_WRITES=1` only in a disposable, funded workspace. Creation tests can consume credits. The glossary test cleans up only the glossary it creates.
